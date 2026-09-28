@@ -2,7 +2,7 @@ name: Create Release and Publish Docker Image
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
   workflow_dispatch:
 
 permissions:
@@ -18,18 +18,23 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 1. Generate an automatic version tag using date and short commit SHA
-      - name: Generate Tag Name
+      # 1. Generate clean release tags and lowercase owner/repo strings
+      - name: Generate Tag Name & Lowerrcase Names
         id: tag
         run: |
-          TAG_NAME="v$(date +'\%Y.\%m.\%d')-${GITHUB_SHA:~0,7}"
+          TAG_NAME="v$(date +'\%Y.\%m.\%d')-${GITHUB_SHA:0:7}"
+          OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          REPO_LOWER=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
+          
           echo "RELEASE_TAG=$TAG_NAME" >> $GITHUB_ENV
-          echo "Generated tag: $TAG_NAME"
+          echo "OWNER_LOWER=$OWNER_LOWER" >> $GITHUB_ENV
+          echo "REPO_LOWER=$REPO_LOWER" >> $GITHUB_ENV
+          echo "Generated tag: $TAG_NAME for ghcr.io/$OWNER_LOWER/$REPO_LOWER"
 
       # 2. Update devcontainer.json image tag to match the release version
       - name: Update devcontainer.json image tag
         run: |
-          IMAGE_URI="ghcr.io/${{ github.repository_owner }}/nachos-devcontainer:${{ env.RELEASE_TAG }}"
+          IMAGE_URI="ghcr.io/${{ env.OWNER_LOWER }}/${{ env.REPO_LOWER }}:${{ env.RELEASE_TAG }}"
           echo "Updating devcontainer.json to use image: $IMAGE_URI"
           sed -i -E 's|("image":\s*")[^"]*(")|\1'"$IMAGE_URI"'\2|g' .devcontainer/devcontainer.json
 
@@ -62,11 +67,12 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/nachos-devcontainer:latest
-            ghcr.io/${{ github.repository_owner }}/nachos-devcontainer:${{ env.RELEASE_TAG }}
+            ghcr.io/${{ env.OWNER_LOWER }}/${{ env.REPO_LOWER }}:latest
+            ghcr.io/${{ env.OWNER_LOWER }}/${{ env.REPO_LOWER }}:${{ env.RELEASE_TAG }}
 
-      # 7. Create GitHub Release and attach environment.zip
+      # 7. Create GitHub Release and attach environment.zip (Runs ONLY on main)
       - name: Create GitHub Release
+        if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_TAG }}
@@ -74,7 +80,7 @@ jobs:
           body: |
             ## Automated Release
             - **Commit:** `${{ github.sha }}`
-            - **Docker Image:** `ghcr.io/${{ github.repository_owner }}/nachos-devcontainer:${{ env.RELEASE_TAG }}`
+            - **Docker Image:** `ghcr.io/${{ env.OWNER_LOWER }}/${{ env.REPO_LOWER }}:${{ env.RELEASE_TAG }}`
             
             ### Quick Start
             1. Download `environment.zip` from the assets below.
