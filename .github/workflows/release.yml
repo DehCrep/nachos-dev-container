@@ -66,8 +66,9 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ghcr.io/${{ env.OWNER_LOWER }}/${{ env.REPO_LOWER }}:latest
-            ghcr.io/${{ env.OWNER_LOWER }}/${{ env.REPO_LOWER }}:${{ env.RELEASE_TAG }}
+            ghcr.io/${{ env.OWNER_LOWER }}/${{ env.REPO_LOWER }}:${{ github.ref_name == 'main' && env.RELEASE_TAG || 'dev' }}
+            ${{ github.ref_name == 'main' && format('ghcr.io/{0}/{1}:latest', env.OWNER_LOWER, env.REPO_LOWER) || '' }}
+
 
       # 6. Create GitHub Release and attach environment.zip (Runs ONLY on main)
       - name: Create GitHub Release
