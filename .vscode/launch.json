@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Nachos (userprog)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/userprog/nachos",
+            "args": [
+                "-x",
+                "${workspaceFolder}/${input:program}"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/userprog",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "program",
+            "type": "promptString",
+            "description": "Pick the program for NachOS to execute relative to your workspace",
+            "default": "test/halt"
+        }
+    ]
+}
