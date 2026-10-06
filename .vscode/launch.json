@@ -1,17 +1,16 @@
 {
-    "version": "0.2.0",
+    "version": "0.3.0",
     "configurations": [
         {
-            "name": "Debug Nachos (userprog)",
+            "name": "Debug Nachos (Custom Flags)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/userprog/nachos",
+            "program": "${workspaceFolder}${pathSeparator}${input:nachosExecutable}",
             "args": [
-                "-x",
-                "${workspaceFolder}/${input:program}"
+                "${input:commandArgs}"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/userprog",
+            "cwd": "${workspaceFolder}${pathSeparator}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -26,10 +25,16 @@
     ],
     "inputs": [
         {
-            "id": "program",
+            "id": "nachosExecutable",
             "type": "promptString",
-            "description": "Pick the program for NachOS to execute relative to your workspace",
-            "default": "test/halt"
+            "description": "Select the NachOS executable to run. Paths are relative to the root of the workspace.",
+            "default": "filesys/nachos"
+        },
+        {
+            "id": "commandArgs",
+            "type": "promptString",
+            "description": "Enter Nachos command line arguments. Paths are relative to the root of the workspace. (e.g. '-x filesys/test/big' or '-x test/sort')",
+            "default": ""
         }
     ]
 }
