@@ -7,7 +7,7 @@ An automated, cross-platform development environment for the Nachos (Not Another
 ### Prerequisites
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)[^1](#installing-docker)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) [^1]
 
 [^1]: Visual Studio Code can directly install docker on the underlying WSL2 instance of your Windows machine. If you're on MacOS, users can directly use the first party [container](https://github.com/apple/container) tool with a visual studio extention such as [this one](https://marketplace.visualstudio.com/items?itemName=Awei-Sumaho.apple-container-manager).
 
