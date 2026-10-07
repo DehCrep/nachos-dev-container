@@ -174,15 +174,31 @@ jobs:
             exit 1
           }
 
+          [[ -d .vscode ]] || {
+            echo "::error::.vscode directory is missing"
+            exit 1
+          }
+
+          [[ -f .gitignore.nachos ]] || {
+            echo "::error::.gitignore.nachos file is missing"
+            exit 1
+          }
+
+          # 2. Clean up previous archive
           rm -f environment.zip
 
-          if [[ -d .vscode ]]; then
-            zip -r -q environment.zip .devcontainer .vscode
-          else
-            echo "::warning::.vscode directory is missing; archiving .devcontainer only"
-            zip -r -q environment.zip .devcontainer
-          fi
+          # 3. Create a temporary staging area to bundle files safely
+          STAGE_DIR=$(mktemp -d)
+          trap 'rm -rf "$STAGE_DIR"' EXIT
 
+          cp -r .devcontainer "$STAGE_DIR/.devcontainer"
+          cp -r .vscode "$STAGE_DIR/.vscode"
+          cp .gitignore.nachos "$STAGE_DIR/.gitignore"
+
+          # 4. Create zip archive from staged contents
+          (cd "$STAGE_DIR" && zip -r -q "$OLDPWD/environment.zip" .devcontainer .vscode .gitignore)
+
+          echo "Successfully archived .devcontainer, .vscode, and .gitignore into environment.zip"
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -198,8 +214,8 @@ jobs:
             ### Quick Start
 
             1. Download `environment.zip` from the assets below.
-            2. Extract `.devcontainer/` and `.vscode/` into the root of your source tree.
-            3. Open the workspace folder in VS Code.
+            2. Extract the archive into the `code` folder of your source tree.
+            3. Open the folder in VS Code.
             4. Select **Reopen in Container**.
 
           files: environment.zip
