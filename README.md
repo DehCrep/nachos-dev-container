@@ -25,6 +25,7 @@ An automated, cross-platform development environment for the Nachos (Not Another
     ├── threads/
     ├── userprog/
     ├── test/
+    ├── .gitignore
     ├── Makefile
     └── ...
     ```

@@ -17,6 +17,7 @@ RUN dpkg --add-architecture i386 \
         gdb-multiarch \
         cmake \
         ed \
+        git \
     && rm -rf /var/lib/apt/lists/*
 
 # Redirect legacy build calls
