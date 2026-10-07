@@ -167,38 +167,8 @@ jobs:
       - name: Generate release archive
         shell: bash
         run: |
-          set -euo pipefail
-
-          [[ -d .devcontainer ]] || {
-            echo "::error::.devcontainer directory is missing"
-            exit 1
-          }
-
-          [[ -d .vscode ]] || {
-            echo "::error::.vscode directory is missing"
-            exit 1
-          }
-
-          [[ -f .gitignore.nachos ]] || {
-            echo "::error::.gitignore.nachos file is missing"
-            exit 1
-          }
-
-          # 2. Clean up previous archive
-          rm -f environment.zip
-
-          # 3. Create a temporary staging area to bundle files safely
-          STAGE_DIR=$(mktemp -d)
-          trap 'rm -rf "$STAGE_DIR"' EXIT
-
-          cp -r .devcontainer "$STAGE_DIR/.devcontainer"
-          cp -r .vscode "$STAGE_DIR/.vscode"
-          cp .gitignore.nachos "$STAGE_DIR/.gitignore"
-
-          # 4. Create zip archive from staged contents
-          (cd "$STAGE_DIR" && zip -r -q "$OLDPWD/environment.zip" .devcontainer .vscode .gitignore)
-
-          echo "Successfully archived .devcontainer, .vscode, and .gitignore into environment.zip"
+          chmod +x ./prepare_environment.sh
+          ./prepare_environment.sh
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
