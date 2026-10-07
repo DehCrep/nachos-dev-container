@@ -5,12 +5,12 @@
             "name": "Debug Nachos (Custom Flags)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}${pathSeparator}${input:nachosExecutable}",
+            "program": "${workspaceFolder}${pathSeparator}${input:nachosDirectory}${pathSeparator}nachos",
             "args": [
                 "${input:commandArgs}"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}${pathSeparator}",
+            "cwd": "${workspaceFolder}${pathSeparator}${input:nachosDirectory}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -25,10 +25,16 @@
     ],
     "inputs": [
         {
-            "id": "nachosExecutable",
-            "type": "promptString",
-            "description": "Select the NachOS executable to run. Paths are relative to the root of the workspace.",
-            "default": "filesys/nachos"
+            "id": "nachosDirectory",
+            "type": "pickString",
+            "description": "Select the directory to run NachOS in. Paths are relative to the root of the workspace.",
+            "options": [
+                "vm",
+                "filesys",
+                "threads",
+                "userprog"
+            ],
+            "default": "filesys"
         },
         {
             "id": "commandArgs",
