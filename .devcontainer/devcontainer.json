@@ -1,6 +1,6 @@
 {
   "name": "Nachos Dev Environment",
-  "image": "ghcr.io/dehcrep/nachos-devcontainer:latest",
+  "image": "ghcr.io/dehcrep/nachos-dev-container:latest",
   "build": {
     "dockerfile": "Dockerfile"
   },
